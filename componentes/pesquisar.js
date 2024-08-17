@@ -9,18 +9,61 @@ import {
     TouchableOpacity,
     View,
     ImageBackground,
+    TextInput,
+    FlatList,
   } from 'react-native'; // Adicione todas as dependências necessárias aqui
+  import { useState, useEffect } from 'react';
 
-  import usuarioFeminino from '../img/usuáriofeminino.png'
-  import capacete from '../img/capacete.png' 
-  import iconEncanamento from '../img/iconEncanamento.png' 
-  import mercenaria from '../img/mercenaria.png'
-  import eletricidade from '../img/eletricidade.png'  
+  import ListItem from '../flat/listItem'
+  import results from '../results'
 
+   import filtro from '../img/classifi.png'
+  // import capacete from '../img/capacete.png' 
+  // import iconEncanamento from '../img/iconEncanamento.png' 
+  // import mercenaria from '../img/mercenaria.png'
+  // import eletricidade from '../img/eletricidade.png'  
+ 
    const imgbg1 ='../img/3.png'
 
-export function Pesquisar(){
-    return (
+   
+   export function Pesquisar(){
+    const [searchText, setSearchText] = useState('');
+    const [list, setList] = useState(results);
+
+    useEffect(()=>{
+      if(searchText === ''){
+        setList(results);
+      }else {
+        setList(
+          results.filter(item=>{
+            if(item.name.toLowerCase().indexOf(searchText.toLowerCase()) > -1){
+              return true;
+            }else {
+              return false;
+            }
+          })
+        )
+      }
+    }, [searchText]);
+
+    const handleOrderClick = () => {
+      let newList = [...results];
+
+    newList.sort((a, b)=>{
+      if(a.name > b.name){
+      return 1;
+      } else {
+      if(b.name > a.name){
+        return -1;
+      } else {
+        return 0;
+      }
+      }
+    })
+    
+      setList(newList);  
+    };
+     return (
       <ImageBackground
       source={require(imgbg1)}
       style={styles.imagemFundo}
@@ -37,43 +80,24 @@ export function Pesquisar(){
 
                     <View style={styles.container2}>
                         <View style={styles.colunaPesquisa}>
-                                
+                          <View style={styles.area}>
+                            <TextInput 
+                            style={styles.input}
+                            placeholder='pesquise aqui'
+                            value={searchText}
+                            onChangeText={(t) => setSearchText(t)}
+                            />
+                            <TouchableOpacity onPress={handleOrderClick} >
+                             <Image style={styles.filtroImg} source={filtro} />
+                            </TouchableOpacity>
+                            </View>
                      
-                         <TouchableOpacity>
-                                 <View style={styles.colunaOpcao}>
-                                    <Image style={styles.img} source={capacete} />
-                                     <Text style={styles.textoOption}>Pequenos reparos</Text>
-                                 </View>
-                         </TouchableOpacity>
-
-                         <TouchableOpacity>
-                                 <View style={styles.colunaOpcao2}>
-                                 <Image style={styles.img} source={mercenaria} />
-                                     <Text style={styles.textoOption}>Mercenária</Text>
-                                 </View>
-                         </TouchableOpacity>
-
-                         <TouchableOpacity>
-                                 <View style={styles.colunaOpcao2}>
-                                 <Image style={styles.img} source={eletricidade} />
-                                     <Text style={styles.textoOption}>Elétrica</Text>
-                                 </View>
-                         </TouchableOpacity>
-
-                            <TouchableOpacity>
-                                 <View style={styles.colunaOpcao2}>
-                                 <Image style={styles.img} source={iconEncanamento} />
-                                     <Text style={styles.textoOption}>Encanamento</Text>
-                                 </View>                         
-                         </TouchableOpacity>
-
-                         <TouchableOpacity>
-                                 <View style={styles.colunaRosa}>
-                                    <Image style={styles.img} source={usuarioFeminino} />
-                                     <Text style={styles.textoEncontreMulheres}>Encontre profissionais mulheres perto de você!!</Text>
-                                 </View>                         
-                         </TouchableOpacity>
-                     
+                         <FlatList
+                         data={list}
+                         style={styles.list}
+                         renderItem={({ item }) => <ListItem data={item}/>} 
+                         keyExtractor={(item) => item.id}
+                         />
                         </View>
                     </View>
 
@@ -83,13 +107,17 @@ export function Pesquisar(){
         </SafeAreaView>
         </ImageBackground>
     )
-}
+    
+};
+
+
+
 
 const styles = StyleSheet.create({
     container: {
       flex: 1,
       paddingTop: StatusBar.currentHeight,
-      justifyContent: "center",
+   
       alignItems: "center",
     },
     container2: {
@@ -103,12 +131,34 @@ const styles = StyleSheet.create({
       resizeMode:'cover',
       width:"100%",
   },
-
+ input:{
+  margin:30,
+  height:50,
+  width:250,
+  borderRadius:20,
+  paddingLeft:2,
+  paddingRight:1,
+  borderWidth:5,
+  borderColor:'#3669a4',
+  fontWeight:500,
+  color:'gray',
+  fontSize:19,
+  flex:1,
+ },
+ area:{
+  flexDirection:'row',
+  alignItems:'center',
+ },
     colunaTitulo:{
         height:73,
         width:500,
         marginTop:80,
         flex:1,
+    },
+    filtroImg:{
+      width:36,
+      height:35,
+      marginRight:7,
     },
     tituloPrincipal:{
         color: 'white',
@@ -124,6 +174,7 @@ const styles = StyleSheet.create({
         borderRadius:16,
         backgroundColor:'white',
         marginTop:30,
+       
     },
     colunaOpcao:{
         backgroundColor:'#e9e9e7',
@@ -175,4 +226,5 @@ const styles = StyleSheet.create({
         marginLeft:10
       }
 
-})
+});
+export default Pesquisar;

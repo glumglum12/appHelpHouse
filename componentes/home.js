@@ -9,8 +9,10 @@ import {
     TouchableOpacity,
     View,
     ImageBackground,
-  } from 'react-native'; // Adicione todas as dependências necessárias aqui
-
+  } from 'react-native-web'; // Adicione todas as dependências necessárias aqui
+  import { NavigationContainer } from '@react-navigation/native';
+  import { createNativeStackNavigator } from '@react-navigation/native-stack';
+  import Pesquisar from './pesquisar';
  
 //   import { LinearGradient } from 'expo-linear-gradient';
 
@@ -25,7 +27,7 @@ import {
 
   const imgbg1 ='../img/3.png'
 
-export function Home(){
+export function Home({ navigation }){
     return (
         <ImageBackground
         source={require(imgbg1)}
@@ -40,12 +42,12 @@ export function Home(){
                      <View style={styles.container2}>
        
                              <View style={styles.posicao}>
-                             <TouchableOpacity>
+                             <TouchableOpacity onPress={() => navigation.navigate('Pesquisar')}>
                                  <View style={styles.coluna1}>
                                      <Text style={styles.texto1}>Qual serviço você procura?</Text>
                                      <Image style={styles.lupaGrande} source={lupaGrande} />
                                  </View>
-                                 </TouchableOpacity>
+                                 </TouchableOpacity >
                              </View>
                         
                      </View>
@@ -112,7 +114,18 @@ export function Home(){
          </ImageBackground>
     );
 }
+const Stack = createNativeStackNavigator();
 
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Pesquisar" component={Pesquisar} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -270,7 +283,7 @@ const styles = StyleSheet.create({
            
           },
 })
-
+export default App;
 
 
 
